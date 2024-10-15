@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
@@ -17,10 +19,15 @@ import com.ktdsuniversity.edu.hello_spring.bbs.vo.DeleteReplyVO;
 import com.ktdsuniversity.edu.hello_spring.bbs.vo.ModifyReplyVO;
 import com.ktdsuniversity.edu.hello_spring.bbs.vo.ReplyVO;
 import com.ktdsuniversity.edu.hello_spring.bbs.vo.WriteReplyVO;
+import com.ktdsuniversity.edu.hello_spring.common.utils.ErrorMapUtil;
 import com.ktdsuniversity.edu.hello_spring.member.vo.MemberVO;
+
+import jakarta.validation.Valid;
 
 @RestController
 public class ReplyController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ReplyController.class);
 
 	@Autowired
 	private ReplyService replyService;
@@ -37,7 +44,11 @@ public class ReplyController {
 	}
 	
 	@PostMapping("/board/reply/{boardId}")
-	public Map<String, Object> doInsertNewReplies(@PathVariable int boardId, WriteReplyVO writeReplyVO, @SessionAttribute("_LOGIN_USER") MemberVO memberVO) {
+	public Map<String, Object> doInsertNewReplies(@PathVariable int boardId, @Valid WriteReplyVO writeReplyVO, BindingResult bindingResult, @SessionAttribute("_LOGIN_USER") MemberVO memberVO) {
+		
+		if(bindingResult.hasErrors()) {
+			return ErrorMapUtil.getErrorMap(bindingResult);
+		}
 		
 		writeReplyVO.setBoardId(boardId);
 		writeReplyVO.setEmail(memberVO.getEmail());
@@ -48,8 +59,11 @@ public class ReplyController {
 		return resultMap;
 	}
 	
-	@GetMapping("/board/reply/delete/{replyid}")
+	@GetMapping("/board/reply/delete/{replyId}")
 	public Map<String, Object> doDeleteReplies(@PathVariable int replyId, DeleteReplyVO deleteReplyVO, @SessionAttribute("_LOGIN_USER") MemberVO memberVO) {
+		
+		deleteReplyVO.setReplyId(replyId);
+		deleteReplyVO.setEmail(memberVO.getEmail());
 		
 		boolean isSuccess = replyService.deleteOneReply(deleteReplyVO);
 		
@@ -58,7 +72,7 @@ public class ReplyController {
 		return resultMap;
 	}
 	
-	@GetMapping("/board/reply/modify/{replyid}")
+	@PostMapping("/board/reply/modify/{replyId}")
 	public Map<String, Object> doUpdateReplies(@PathVariable int replyId, ModifyReplyVO modifyReplyVO, @SessionAttribute("_LOGIN_USER") MemberVO memberVO) {
 		
 		modifyReplyVO.setReplyId(replyId);

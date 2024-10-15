@@ -12,7 +12,7 @@ import com.ktdsuniversity.edu.hello_spring.bbs.vo.DeleteReplyVO;
 import com.ktdsuniversity.edu.hello_spring.bbs.vo.ModifyReplyVO;
 import com.ktdsuniversity.edu.hello_spring.bbs.vo.ReplyVO;
 import com.ktdsuniversity.edu.hello_spring.bbs.vo.WriteReplyVO;
-import com.ktdsuniversity.edu.hello_spring.common.exceptions.PageNotFoundException;
+import com.ktdsuniversity.edu.hello_spring.common.exceptions.AjaxException;
 
 @Service
 public class ReplyServiceImpl implements ReplyService{
@@ -38,7 +38,7 @@ public class ReplyServiceImpl implements ReplyService{
 		ReplyVO replyVO = replyDao.selectOneReply(deleteReplyVO.getReplyId());
 		
 		if(!deleteReplyVO.getEmail().equals(replyVO.getEmail())) {
-			throw new PageNotFoundException("잘못된 접근입니다");
+			throw new AjaxException("잘못된 접근입니다");
 		}
 		return this.replyDao.deleteOneReply(deleteReplyVO) > 0;
 	}
@@ -48,7 +48,7 @@ public class ReplyServiceImpl implements ReplyService{
 	public boolean updateOneReply(ModifyReplyVO modifyReplyVO) {
 		ReplyVO originalReplyVO = replyDao.selectOneReply(modifyReplyVO.getReplyId());
 		if(!modifyReplyVO.getEmail().equals(originalReplyVO.getEmail())) {
-			throw new PageNotFoundException("잘못된 접근입니다");
+			throw new AjaxException("잘못된 접근입니다");
 		}
 		
 		return this.replyDao.updateOneReply(modifyReplyVO) > 0;
@@ -58,8 +58,8 @@ public class ReplyServiceImpl implements ReplyService{
 	public boolean recommendOneReply(int replyId, String email) {
 		ReplyVO replyVO = replyDao.selectOneReply(replyId);
 		
-		if(!email.equals(replyVO.getEmail())) {
-			throw new PageNotFoundException("잘못된 접근입니다");
+		if(email.equals(replyVO.getEmail())) {
+			throw new AjaxException("잘못된 접근입니다");
 		}
 		
 		return this.replyDao.recommendOneReply(replyId) > 0;

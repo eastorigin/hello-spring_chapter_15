@@ -59,5 +59,34 @@ pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
         </div>
       </c:if>
     </div>
+
+    <template id="reply-template">
+      <div
+        class="reply"
+        data-reply-id="{replyId}"
+        style="padding-left: {paddingLeft}rem"
+      >
+        <div class="author">{authorName} ({authorEmail})</div>
+        <div class="recommend-count">추천수: {recommendCount}</div>
+        <div class="datetime">
+          <span class="crtdt">등록: {crtDt}</span>
+          <!-- 등록날짜 및 시간과 수정날짜 및 시간이 다를 때에만 수정을 노출 -->
+          <span class="mdfydt">수정: {mdfyDt}</span>
+        </div>
+        <!-- 내용물을 그대로 노출시킨다 -->
+        <pre class="content">{content}</pre>
+        <!-- 로그인한 사용자가 작성한 댓글일 경우에만 노출 -->
+        <div class="my-reply">
+          <span class="modify-reply">수정</span>
+          <span class="delete-reply">삭제</span>
+          <span class="re-reply">답변하기</span>
+        </div>
+        <!-- 다른 사용자가 작성한 댓글일 경우에만 노출 -->
+        <div class="other-reply">
+          <span class="recommend-reply">추천하기</span>
+          <span class="re-reply">답변하기</span>
+        </div>
+      </div>
+    </template>
   </body>
 </html>

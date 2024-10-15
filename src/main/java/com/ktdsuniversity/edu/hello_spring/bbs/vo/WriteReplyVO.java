@@ -1,5 +1,7 @@
 package com.ktdsuniversity.edu.hello_spring.bbs.vo;
 
+import org.hibernate.validator.constraints.Length;
+
 import jakarta.validation.constraints.NotBlank;
 
 public class WriteReplyVO {
@@ -9,6 +11,7 @@ public class WriteReplyVO {
 	private String email;
 	
 	@NotBlank(message = "댓글 내용을 입력해주세요")
+	@Length(min = 5, message = "댓글의 내용은 다섯글자 이상 입력해주세요")
 	private String content;
 	
 	private int parentReplyId;

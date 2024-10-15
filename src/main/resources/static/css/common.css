@@ -69,7 +69,7 @@ ul.horizontal-list li {
 .replies > .write-reply {
   display: grid;
   grid-template-columns: 1fr 80px;
-  grid-template-rows: 1fr 40px;
+  grid-template-rows: minmax(0rem, auto) 1fr 40px;
   gap: 10px;
   align-items: center;
   margin-top: 10px;

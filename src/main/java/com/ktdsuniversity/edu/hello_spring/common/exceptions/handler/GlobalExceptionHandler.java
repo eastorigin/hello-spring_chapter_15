@@ -1,11 +1,16 @@
 package com.ktdsuniversity.edu.hello_spring.common.exceptions.handler;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ktdsuniversity.edu.hello_spring.common.exceptions.AjaxException;
 import com.ktdsuniversity.edu.hello_spring.common.exceptions.AlreadyUseException;
 import com.ktdsuniversity.edu.hello_spring.common.exceptions.FileNotExistsException;
 import com.ktdsuniversity.edu.hello_spring.common.exceptions.MakeXlsxFileException;
@@ -16,6 +21,16 @@ import com.ktdsuniversity.edu.hello_spring.common.exceptions.UserIdentifyNotMatc
 public class GlobalExceptionHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+	
+	@ExceptionHandler(AjaxException.class)
+	@ResponseBody
+	public Map<String, Object> returnAjaxErrorMessage(AjaxException ae) {
+		Map<String, Object> ajaxErrorMap = new HashMap<>();
+		
+		ajaxErrorMap.put("error", ae.getMessage());
+		
+		return ajaxErrorMap;
+	}
 	
 	@ExceptionHandler(PageNotFoundException.class)
 	public String viewPageNotFoundPage() {
@@ -59,7 +74,8 @@ public class GlobalExceptionHandler {
 	}
 	
 	@ExceptionHandler(RuntimeException.class)
-	public String viewRuntimeExceptionPage(Model model) {
+	public String viewRuntimeExceptionPage(Model model, RuntimeException re) {
+		logger.error(re.getMessage(), re);
 		model.addAttribute("message", "예기치 못한 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
 		return "error/500";
 	}
